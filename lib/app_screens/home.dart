@@ -95,8 +95,6 @@ class FlightBookButton extends StatelessWidget{
               color: Colors.white,
           ),),
           elevation: 6.0,
-
-          //use flat arrow
           onPressed: () => showUserDetails(context)
           ),
     );
@@ -108,7 +106,6 @@ class FlightBookButton extends StatelessWidget{
      );
 
      showDialog(context: context,
-     //use flate arrow
      builder: (BuildContext context) => alertDialog
      );
   }
