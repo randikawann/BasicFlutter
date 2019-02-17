@@ -58,7 +58,8 @@ class Home extends StatelessWidget {
                 )
               ],
             ),
-            FlightImageAssert()
+            FlightImageAssert(),
+            FlightBookButton()
           ],
         ));
   }
@@ -71,7 +72,44 @@ class FlightImageAssert extends StatelessWidget{
     AssetImage assetImage = AssetImage("images/29189619.jpeg");
     Image image = Image(image: assetImage, width: 250.0, height: 250.0,);
     return Container(
+      margin: EdgeInsets.only(top: 20.0),
       child: image,
     );
+  }
+}
+
+class FlightBookButton extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Container(
+      margin: EdgeInsets.only(top: 20.0),
+      width: 250.0,
+      height: 50.0,
+      child: RaisedButton(
+          color: Colors.deepOrange,
+          child: Text(
+            "Show Details",
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+          ),),
+          elevation: 6.0,
+          onPressed: () {
+            //action
+            showUserDetails(context);
+          }),
+    );
+  }
+  void showUserDetails(BuildContext context){
+     var alertDialog = AlertDialog(
+       title: Text("Details shows successfully",),
+       content: Text("Choose like person as soon as posible "),
+     );
+
+     showDialog(context: context,
+     builder: (BuildContext context){
+       return alertDialog;
+     });
   }
 }
