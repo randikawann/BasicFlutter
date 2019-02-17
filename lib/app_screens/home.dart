@@ -57,8 +57,21 @@ class Home extends StatelessWidget {
                   ),
                 )
               ],
-            )
+            ),
+            FlightImageAssert()
           ],
         ));
+  }
+}
+
+class FlightImageAssert extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    AssetImage assetImage = AssetImage("images/29189619.jpeg");
+    Image image = Image(image: assetImage, width: 250.0, height: 250.0,);
+    return Container(
+      child: image,
+    );
   }
 }
