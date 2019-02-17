@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import './app_screens/first_screen.dart';
+
 
 //void main(){
 //  runApp(MyFlutterApp());
@@ -18,16 +20,7 @@ class MyFlutterApp extends StatelessWidget{
           title: "My Flutter app",
           home:Scaffold(
             appBar: AppBar(title: Text("First Flutter application"),),
-            body: Material(
-                color: Colors.lightBlueAccent,
-                child: Center(
-                  child: Text(
-                    "Hello flutter",
-                    textDirection: TextDirection.ltr,
-                    style: TextStyle(color: Colors.white, fontSize: 40.0),
-                  ),
-                )
-            ),
+            body: FirstScreen()
           ),
         )
     );
