@@ -7,16 +7,32 @@ class Home extends StatelessWidget{
         return Container(
       alignment: Alignment.center,
       color: Colors.deepPurple,
-      child: Text(
-        "Flight",
-        textDirection: TextDirection.ltr,
-        style: TextStyle(
-          decoration: TextDecoration.none,
-          fontSize: 75,
+      child: Row(
+        children: <Widget>[
+          Expanded(child: Text(
+            "Randika",
+            textDirection: TextDirection.ltr,
+            style: TextStyle(
+              decoration: TextDecoration.none,
+              fontSize: 35,
 
-        ),
+            ),
 
-      ),
+          ),),
+          Expanded(child: Text(
+            "Kasun Wanninayaka. Sabaragmauwa university of sri lanka",
+            textDirection: TextDirection.ltr,
+            style: TextStyle(
+              decoration: TextDecoration.none,
+              fontSize: 20,
+
+            ),
+
+          ),)
+
+        ],
+      )
+
     );
   }
 }
