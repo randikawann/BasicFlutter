@@ -7,10 +7,32 @@ void main(){
       debugShowCheckedModeBanner: false,
       title: "Second App",
       home: Scaffold(
+        appBar: AppBar(title: Text("Floating action button"),),
         body: getListView(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            debugPrint("FAB clicked");
+          },
+          child: Icon(Icons.add),
+          tooltip: 'add one or more item',
+        ),
       ),
     )
   );
+}
+
+void showSnacBar(BuildContext context, String item){
+  var snackbar = SnackBar(
+    content: Text("you just clicked $item"),
+    action: SnackBarAction(
+        label: "UNDO",
+        onPressed: (){
+          debugPrint("Performing undo button");
+        }
+    ),
+  );
+
+  Scaffold.of(context).showSnackBar(snackbar);
 }
 
 List<String> getListItem(){
@@ -27,6 +49,7 @@ Widget getListView(){
           leading: Icon(Icons.arrow_right),
           title: Text(listItems[index]),
           onTap: (){
+            showSnacBar(context, listItems[index]);
             debugPrint('${listItems[index]} was tapped');
           },
 
