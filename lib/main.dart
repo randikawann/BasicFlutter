@@ -32,7 +32,18 @@ class _SIFormState extends State<SIForm>{
   final _minimumPadding = 5.0;
   var _currencies = ['Rupees', 'Dollars','Pounds','Other'];
   var _currentItemSelected = '';
+  var _displaytext = '';
 
+
+  @override
+  void initState() {
+    super.initState();
+    _currentItemSelected = _currencies[0];
+  }
+
+  TextEditingController principlecontroller = TextEditingController();
+  TextEditingController ratecontroller = TextEditingController();
+  TextEditingController termcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
 
@@ -54,6 +65,7 @@ class _SIFormState extends State<SIForm>{
                     padding: EdgeInsets.only(top: _minimumPadding, bottom: _minimumPadding),
                     child: TextField(
                       style: textStyle,
+                        controller: principlecontroller,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             labelText: 'Principal',
@@ -68,6 +80,7 @@ class _SIFormState extends State<SIForm>{
                   Padding(
                     padding: EdgeInsets.only(top: _minimumPadding,bottom: _minimumPadding),
                     child: TextField(
+                      controller: ratecontroller,
                       style: textStyle,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -85,6 +98,7 @@ class _SIFormState extends State<SIForm>{
                     children: <Widget>[
                       Expanded(
                         child: TextField(
+                          controller: termcontroller,
                           style: textStyle,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -108,8 +122,6 @@ class _SIFormState extends State<SIForm>{
                           value: _currentItemSelected,
                           onChanged: (String newValueSelected){
                             _onDropDownItemSelected(newValueSelected);
-
-
                           },
                         ),
                       )
@@ -127,6 +139,10 @@ class _SIFormState extends State<SIForm>{
                               textColor: Theme.of(context).primaryColorDark,
                               child: Text('Calculate', textScaleFactor: 1.5,),
                               onPressed: (){
+                                setState(() {
+                                  this._displaytext = _calculatetotalReturn();
+                                });
+
 
                               },
                             ),
@@ -138,6 +154,9 @@ class _SIFormState extends State<SIForm>{
                               textColor: Theme.of(context).primaryColorLight,
                               child: Text('Reset',textScaleFactor: 1.5,),
                               onPressed: (){
+                                setState(() {
+                                  resetbuttonclicked();
+                                });
 
                               },
                             ),
@@ -148,7 +167,7 @@ class _SIFormState extends State<SIForm>{
                   ),
                   Padding(
                     padding: EdgeInsets.all(_minimumPadding * 2),
-                    child: Text('Todo Text'),
+                    child: Text(this._displaytext),
                   )
                 ],
               ),
@@ -176,5 +195,28 @@ class _SIFormState extends State<SIForm>{
        this._currentItemSelected = newValueSelected;
     });
   }
+
+  String _calculatetotalReturn() {
+    double principal = double.parse(principlecontroller.text);
+    double rate = double.parse(ratecontroller.text);
+    double term = double.parse(termcontroller.text);
+
+    double totalAmountpayble = principal + (principal * rate * term)/100 ;
+    String result = "After $term years, your investment will be worth $totalAmountpayble $_currentItemSelected";
+    return result;
+
+
+  }
+
+  void resetbuttonclicked() {
+    principlecontroller.text = '';
+    ratecontroller.text = '';
+    termcontroller.text = '';
+    _displaytext = '';
+    _currentItemSelected = _currencies[0];
+
+
+  }
+
 
 }
