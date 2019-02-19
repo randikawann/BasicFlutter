@@ -31,6 +31,7 @@ class _SIFormState extends State<SIForm>{
 
   final _minimumPadding = 5.0;
   var _currencies = ['Rupees', 'Dollars','Pounds','Other'];
+  var _currentItemSelected = '';
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +105,10 @@ class _SIFormState extends State<SIForm>{
                               child: Text(values),
                             );
                           }).toList(),
-                          value:  'Rupees',
+                          value: _currentItemSelected,
                           onChanged: (String newValueSelected){
+                            _onDropDownItemSelected(newValueSelected);
+
 
                           },
                         ),
@@ -157,7 +160,7 @@ class _SIFormState extends State<SIForm>{
   }
 
   Widget getImageAssert(){
-    AssetImage assetImage = AssetImage("images/29189619.jpeg");
+    AssetImage assetImage = AssetImage("images/moneyhand.jpg");
     Image image = Image(image: assetImage, width: 150.0, height: 150.0,);
 
     return(Container(
@@ -166,6 +169,12 @@ class _SIFormState extends State<SIForm>{
     )
 
     );
+  }
+
+  void _onDropDownItemSelected(String newValueSelected) {
+    setState(() {
+       this._currentItemSelected = newValueSelected;
+    });
   }
 
 }
