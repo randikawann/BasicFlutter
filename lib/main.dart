@@ -1,243 +1,75 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: "Simple Calculator",
-    home: SIForm(),
 
-    //apply them for whole project
-    theme: ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: Colors.indigo,
-      accentColor: Colors.indigoAccent,
-    ),
-  ));
-}
+Future<Post> fetchPost() async {
+  final response = await http.get('https://jsonplaceholder.typicode.com/posts/');
 
-class SIForm extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _SIFormState();
+  if (response.statusCode == 200) {
+    // If the call to the server was successful, parse the JSON
+    return Post.fromJson(json.decode(response.body));
+  } else {
+    // If that call was not successful, throw an error.
+    throw Exception('Failed to load post');
   }
 }
 
-class _SIFormState extends State<SIForm> {
-  var _formKey = GlobalKey<FormState>();
-  final _minimumPadding = 5.0;
-  var _currencies = ['Rupees', 'Dollars', 'Pounds', 'Other'];
-  var _currentItemSelected = '';
-  var _displaytext = '';
+class Post {
+  final int userId;
+  final int id;
+  final String title;
+  final String body;
 
-  @override
-  void initState() {
-    super.initState();
-    _currentItemSelected = _currencies[0];
+  Post({this.userId, this.id, this.title, this.body});
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+
+    return Post(
+      userId: json['userId'],
+      id: json['id'],
+      title: json['title'],
+      body: json['body'],
+    );
   }
+}
 
-  TextEditingController principlecontroller = TextEditingController();
-  TextEditingController ratecontroller = TextEditingController();
-  TextEditingController termcontroller = TextEditingController();
+void main() => runApp(MyApp(post: fetchPost()));
+
+class MyApp extends StatelessWidget {
+  final Future<Post> post;
+
+  MyApp({Key key, this.post}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    //apply them using main theme to part
-    TextStyle textStyle = Theme.of(context).textTheme.title;
-    // TODO: implement build
-    return (Scaffold(
+    return MaterialApp(
+      title: 'Fetch Data Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
         appBar: AppBar(
-            title: Text(
-          "Simple Interest Calculator",
-        )),
-        body: Form(
-          key: _formKey,
-          child: Padding(
-              padding: EdgeInsets.all(_minimumPadding * 2),
-              child: //Column -> this is replace because of it is not set proper with key pad
-                  ListView(
-                children: <Widget>[
-                  getImageAssert(),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: _minimumPadding, bottom: _minimumPadding),
-                    child: TextFormField(
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Please enter principal amount';
-                        }
-                      },
-                      style: textStyle,
-                      controller: principlecontroller,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          errorStyle: TextStyle(
-                            color: Colors.yellowAccent,
-                            fontSize: 15.0,
-                          ),
-                          labelText: 'Principal',
-                          hintText: 'Enter Principal e.g. 12000',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: _minimumPadding, bottom: _minimumPadding),
-                    child: TextFormField(
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Please enter principal amount';
-                        }
-                      },
-                      controller: ratecontroller,
-                      style: textStyle,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          errorStyle: TextStyle(
-                            color: Colors.yellowAccent,
-                            fontSize: 15.0,
-                          ),
-                          labelText: 'Rate of Interest',
-                          hintText: 'In percent',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          )),
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextFormField(
-                          validator: (String value) {
-                            if (value.isEmpty) {
-                              return 'Please enter principal amount';
-                            }
-                          },
-                          controller: termcontroller,
-                          style: textStyle,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              errorStyle: TextStyle(
-                                color: Colors.yellowAccent,
-                                fontSize: 15.0,
-                              ),
-                              labelText: 'Term',
-                              hintText: 'Time in Year',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              )),
-                        ),
-                      ),
-                      Container(
-                        width: _minimumPadding * 5,
-                      ),
-                      Expanded(
-                        child: DropdownButton<String>(
-                          items: _currencies.map((String values) {
-                            return DropdownMenuItem<String>(
-                              value: values,
-                              child: Text(values),
-                            );
-                          }).toList(),
-                          value: _currentItemSelected,
-                          onChanged: (String newValueSelected) {
-                            _onDropDownItemSelected(newValueSelected);
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: _minimumPadding, top: _minimumPadding),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            textColor: Theme.of(context).primaryColorDark,
-                            child: Text(
-                              'Calculate',
-                              textScaleFactor: 1.5,
-                            ),
-                            onPressed: () {
-                              //submite validation interface
-                              setState(() {
-                                if (_formKey.currentState.validate()) {
-                                  this._displaytext = _calculatetotalReturn();
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        Container(
-                          width: _minimumPadding * 5,
-                        ),
-                        Expanded(
-                          child: RaisedButton(
-                            color: Theme.of(context).primaryColorDark,
-                            textColor: Theme.of(context).primaryColorLight,
-                            child: Text(
-                              'Reset',
-                              textScaleFactor: 1.5,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                resetbuttonclicked();
-                              });
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(_minimumPadding * 2),
-                    child: Text(this._displaytext),
-                  )
-                ],
-              )),
-        )));
-  }
+          title: Text('Fetch Data Example'),
+        ),
+        body: Center(
+          child: FutureBuilder<Post>(
+            future: post,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data.title);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
 
-  Widget getImageAssert() {
-    AssetImage assetImage = AssetImage("images/moneyhand.jpg");
-    Image image = Image(
-      image: assetImage,
-      width: 150.0,
-      height: 150.0,
+              // By default, show a loading spinner
+              return CircularProgressIndicator();
+            },
+          ),
+        ),
+      ),
     );
-
-    return (Container(
-      child: image,
-      margin: EdgeInsets.all(_minimumPadding * 10),
-    ));
-  }
-
-  void _onDropDownItemSelected(String newValueSelected) {
-    setState(() {
-      this._currentItemSelected = newValueSelected;
-    });
-  }
-
-  String _calculatetotalReturn() {
-    double principal = double.parse(principlecontroller.text);
-    double rate = double.parse(ratecontroller.text);
-    double term = double.parse(termcontroller.text);
-
-    double totalAmountpayble = principal + (principal * rate * term) / 100;
-    String result =
-        "After $term years, your investment will be worth $totalAmountpayble $_currentItemSelected";
-    return result;
-  }
-
-  void resetbuttonclicked() {
-    principlecontroller.text = '';
-    ratecontroller.text = '';
-    termcontroller.text = '';
-    _displaytext = '';
-    _currentItemSelected = _currencies[0];
   }
 }
