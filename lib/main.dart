@@ -1,75 +1,83 @@
-import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:async' show Future;
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//get the assets
+Future<String> loadAssets() async{
+  return await rootBundle.loadString('assets/States.json');
+}
 
+//get the states from the assets
+Future loadStates() async{
+  String jsonState =  await loadAssets();
+  final jsonResponse = json.decode(jsonState);
 
-Future<Post> fetchPost() async {
-  final response = await http.get('https://jsonplaceholder.typicode.com/posts/');
+  States states = new States.fromJson(jsonResponse);
+  print(states.states);
+  return states.states;
+}
 
-  if (response.statusCode == 200) {
-    // If the call to the server was successful, parse the JSON
-    return Post.fromJson(json.decode(response.body));
-  } else {
-    // If that call was not successful, throw an error.
-    throw Exception('Failed to load post');
+void main() {
+  runApp(new MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  MyAppState createState() {
+    return new MyAppState();
   }
 }
 
-class Post {
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
+class States{
 
-  Post({this.userId, this.id, this.title, this.body});
+  String name;
+  List<String> states;
 
-  factory Post.fromJson(Map<String, dynamic> json) {
+  States({this.name, this.states});
 
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
+  factory States.fromJson(Map<String, dynamic> json){
+
+    var statesJson = json["states"];
+    List<String> stateList = new List<String>.from(statesJson);
+
+    return States(
+        name: json["name"],
+        states: stateList
     );
   }
 }
 
-void main() => runApp(MyApp(post: fetchPost()));
-
-class MyApp extends StatelessWidget {
-  final Future<Post> post;
-
-  MyApp({Key key, this.post}) : super(key: key);
-
+class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fetch Data Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Fetch Data Example'),
-        ),
-        body: Center(
-          child: FutureBuilder<Post>(
-            future: post,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data.title);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
+    return new MaterialApp(
+        home: new Scaffold(
+            appBar: new AppBar(
+                title: new Text("States JSON")
+            ),
+            body: new FutureBuilder(
+                future: loadStates(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return new ListView.builder(
+                        itemBuilder: (context, index){
+                          if(index >= snapshot?.data?.length ?? 0) return null;
 
-              // By default, show a loading spinner
-              return CircularProgressIndicator();
-            },
-          ),
-        ),
-      ),
+                          return new ListTile(
+                            title: new Text("${snapshot.data[index]}"),
+                          );
+
+//                        itemBuilder: (context, index){
+//                          new ListTile(
+//                            title: new Text("${snapshot.data}"),
+//                          );
+                        },);
+                  }else{
+                    return new Center(child: new CircularProgressIndicator());
+                  }
+                })
+        )
     );
   }
 }
