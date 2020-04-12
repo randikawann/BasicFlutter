@@ -1,4 +1,4 @@
-# firstflutter
+# InterestCalculator
 
 This is flutter application. Calculate currency profits for depositing your money. It is depend on many currency unit. also you can get broad idea about your money deposit.
 
